@@ -172,7 +172,7 @@ class chessBoard(object):
             for k2,obj in enumerate(x):
                 if obj.getIcon()==" ":
                     if xor(k%2==0,k2%2==0):
-                        row+=" "
+                        row+=u"\u2591"
                     else:
                         row+=u"\u2593"
                 else:
@@ -186,7 +186,6 @@ class chessBoard(object):
         print "\n"*10
         print "Ajedrez en consola!!!"
         print "========================"
-        print "\n"
         print "   "+"   ".join(list("ABCDEFGH"))
         for k,x in enumerate(self.board):
             print " "+("+---")*len(self.board[0])+"+"
@@ -226,7 +225,7 @@ class chessBoard(object):
             or move[3] not in "ABCDEFGH" \
             or move[1] not in "12345678" \
             or move[4] not in "12345678":
-            self.message="Jugada inválida, use el formato: 'A1 A2'"
+            self.message="Jugada inválida,use el formato: 'LD LD' : L=(A,B,C,D,E,F,G,H) D=(1,2,3,4,5,6,7,8)"
             return False
         start,end=move.split(" ")
         if start == end:
@@ -234,6 +233,9 @@ class chessBoard(object):
             return False
         r1,c1=self.getCordinates(start)
         r2,c2=self.getCordinates(end)
+        if self.board[r1][c1].player==" ":
+            self.message="La posición %s esta vacía"%start
+            return False
         if self.board[r1][c1].player!=player:
             self.message="La Ficha que intenta mover es del otro jugador"
             return False
@@ -256,15 +258,18 @@ class chessBoard(object):
         print "Elija un modo de visualización (se recomienda la fuente Deja Vu Sans Mono)"
         print "1) Modo Full HD (recommended)"
         print "2) Modo solicitado "
-        print "opcion:"
+        print("opcion:"),
         if raw_input()=="2":
             draw=self.draw
         else:
             draw=self.drawHD
         draw()
         while not self.gameEnd:
-            print "\nTurno %s %s:"%(name[player].strip(),icon[player])
+            print ("\n%s %s>"%(name[player].strip(),icon[player])),
             move=raw_input()
+            if move.strip()=="":
+                draw()
+                continue
             if self.isValidMove(move,player):
                 self.movePiece(move)
                 draw()
@@ -278,4 +283,5 @@ class chessBoard(object):
         print history
         print "El ganador es el jugador %s %s :)"%(name[self.winner],icon[self.winner])
 
-cb=chessBoard()
+if __name__ == "__main__":
+    chessBoard()
